@@ -1,6 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include "Constants.h"
-#include "Director.h"
+#include "Engine.h"
 #include "Field.h"
 
 int main()
@@ -9,11 +9,11 @@ int main()
 	sf::Texture texture;
 	texture.loadFromFile(constants::TextureFileName);
 
-	Director::makeTileSprites(texture);
+	Engine::makeTileSprites(texture);
 
 	sf::RenderWindow window(sf::VideoMode(320, 480), "Game");
 
-	Director director(&window);
+	Engine director(&window);
 
 	while (window.isOpen())
 	{

@@ -145,13 +145,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Director.cpp" />
-    <ClCompile Include="Figure.cpp" />
+    <ClCompile Include="Engine.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Constants.h" />
-    <ClInclude Include="Director.h" />
+    <ClInclude Include="Engine.h" />
     <ClInclude Include="Field.h" />
     <ClInclude Include="Figure.h" />
   </ItemGroup>

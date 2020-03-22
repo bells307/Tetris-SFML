@@ -5,14 +5,14 @@
 #include "Figure.h"
 #include "Constants.h"
 
-typedef std::map<FigureColor, sf::Sprite> FigureSpritesMap;
+typedef std::map<Figure::FigureColor, sf::Sprite> FigureSpritesMap;
 typedef std::pair<Figure*, std::vector<sf::Vector2f>> FigurePositionPair;
 static FigureSpritesMap tileSprites;
 
-class Director
+class Engine
 {
 public:
-	Director(sf::RenderWindow* window);
+	Engine(sf::RenderWindow* window);
 
 	void drawFigures();
 	void keyPressed(sf::Keyboard::Key key);
@@ -21,9 +21,10 @@ public:
 	static sf::Sprite getTileSprite(Figure* figure);
 
 protected:
-	void createFigure(FigureType type, FigureColor color);
-	void moveFigure(FigureMoveDirection dir);
+	void createFigure(Figure::FigureType type, Figure::FigureColor color);
+	void moveFigure(Figure::FigureMoveDirection dir);
 	void rotateFigure();
+	std::vector<int> getFigureValues(Figure* figure);
 
 private:
 	sf::RenderWindow* window_ = nullptr;

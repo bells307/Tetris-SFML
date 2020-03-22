@@ -1,23 +1,23 @@
-#include "Director.h"
+#include "Engine.h"
 
-Director::Director(sf::RenderWindow* window) :
+Engine::Engine(sf::RenderWindow* window) :
 	window_(window)
 {
-	createFigure(FigureType::T, FigureColor::Cyan);
+	createFigure(Figure::FigureType::T, Figure::FigureColor::Cyan);
 }
 
-void Director::keyPressed(sf::Keyboard::Key key)
+void Engine::keyPressed(sf::Keyboard::Key key)
 {
 	switch (key)
 	{
 	case sf::Keyboard::Left:
-		moveFigure(FigureMoveDirection::Left);
+		moveFigure(Figure::FigureMoveDirection::Left);
 		break;
 	case sf::Keyboard::Right:
-		moveFigure(FigureMoveDirection::Right);
+		moveFigure(Figure::FigureMoveDirection::Right);
 		break;
 	case sf::Keyboard::Down:
-		moveFigure(FigureMoveDirection::Down);
+		moveFigure(Figure::FigureMoveDirection::Down);
 		break;
 	default:
 		rotateFigure();
@@ -25,18 +25,18 @@ void Director::keyPressed(sf::Keyboard::Key key)
 	}
 }
 
-void Director::makeTileSprites(const sf::Texture& texture)
+void Engine::makeTileSprites(const sf::Texture& texture)
 {
 	tileSprites.clear();
-	for (int i = 0, img_count = 0; i < FigureColor::Count; ++i, img_count += constants::TileSide)
+	for (int i = 0, img_count = 0; i < Figure::FigureColor::Count; ++i, img_count += constants::TileSide)
 	{
 		sf::Sprite sprite(texture);
 		sprite.setTextureRect(sf::IntRect(img_count, 0, constants::TileSide, constants::TileSide));
-		tileSprites.emplace((FigureColor)i, sprite);
+		tileSprites.emplace((Figure::FigureColor)i, sprite);
 	}
 }
 
-sf::Sprite Director::getTileSprite(Figure* figure)
+sf::Sprite Engine::getTileSprite(Figure* figure)
 {
 	if (nullptr == figure)
 		return sf::Sprite();
@@ -52,10 +52,10 @@ sf::Sprite Director::getTileSprite(Figure* figure)
 	return res;
 }
 
-void Director::createFigure(FigureType type, FigureColor color)
+void Engine::createFigure(Figure::FigureType type, Figure::FigureColor color)
 {
 	Figure* figure = new Figure(type, color);
-	std::vector<int> values = figure->getFigureValues();
+	std::vector<int> values = getFigureValues(figure);
 
 	std::vector<sf::Vector2f> tilePositions(values.size());
 	int i = 0;
@@ -68,7 +68,7 @@ void Director::createFigure(FigureType type, FigureColor color)
 	currentFigure_ = std::make_pair(figure, tilePositions);
 }
 
-void Director::drawFigures()
+void Engine::drawFigures()
 {
 	Figure* figure = currentFigure_.first;
 	std::vector<sf::Vector2f> tilePositions = currentFigure_.second;
@@ -83,21 +83,21 @@ void Director::drawFigures()
 	}
 }
 
-void Director::moveFigure(FigureMoveDirection dir)
+void Engine::moveFigure(Figure::FigureMoveDirection dir)
 {
 	std::vector<sf::Vector2f>& tilePositions = currentFigure_.second;
 
 	switch (dir)
 	{
-	case Left:
+	case Figure::FigureMoveDirection::Left:
 		for (int i = 0; i < tilePositions.size(); i++)
 			tilePositions[i].x--;
 		break;
-	case Right:
+	case Figure::FigureMoveDirection::Right:
 		for (int i = 0; i < tilePositions.size(); i++)
 			tilePositions[i].x++;
 		break;
-	case Down:
+	case Figure::FigureMoveDirection::Down:
 		for (int i = 0; i < tilePositions.size(); i++)
 			tilePositions[i].y++;
 		break;
@@ -106,7 +106,7 @@ void Director::moveFigure(FigureMoveDirection dir)
 	}
 }
 
-void Director::rotateFigure()
+void Engine::rotateFigure()
 {
 	std::vector<sf::Vector2f>& tilePositions = currentFigure_.second;
 	sf::Vector2f centerPoint = tilePositions[1];
@@ -118,4 +118,14 @@ void Director::rotateFigure()
 		tilePositions[i].x = centerPoint.x - x;
 		tilePositions[i].y = centerPoint.y - y;
 	}
+}
+
+std::vector<int> Engine::getFigureValues(Figure* figure)
+{
+	std::vector<int> res;
+	auto find_it = constants::FigureValues.find(figure->getType());
+	if (find_it != constants::FigureValues.end())
+		res = (*find_it).second;
+
+	return res;
 }
