@@ -28,8 +28,8 @@ protected:
 
 private:
 	sf::RenderWindow* window_ = nullptr;
+	sf::Clock clock_;
 	FigurePositionPair currentFigure_;
-	std::vector<FigurePositionPair> figuresVector;
 };
 
 #endif // !Director_h

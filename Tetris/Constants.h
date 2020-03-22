@@ -23,4 +23,6 @@ namespace constants
 		{ Figure::FigureType::J, { 3, 5, 7, 6 } },
 		{ Figure::FigureType::O, { 2, 3, 4, 5 } },
 	};
+
+	const float TimerDelay = 0.3;
 }

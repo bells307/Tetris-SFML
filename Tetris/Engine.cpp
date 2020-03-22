@@ -3,7 +3,7 @@
 Engine::Engine(sf::RenderWindow* window) :
 	window_(window)
 {
-	createFigure(Figure::FigureType::T, Figure::FigureColor::Cyan);
+	createFigure(Figure::FigureType::J, Figure::FigureColor::Cyan);
 }
 
 void Engine::keyPressed(sf::Keyboard::Key key)
@@ -19,8 +19,10 @@ void Engine::keyPressed(sf::Keyboard::Key key)
 	case sf::Keyboard::Down:
 		moveFigure(Figure::FigureMoveDirection::Down);
 		break;
-	default:
+	case sf::Keyboard::Up:
 		rotateFigure();
+		break;
+	default:
 		break;
 	}
 }
@@ -71,13 +73,19 @@ void Engine::createFigure(Figure::FigureType type, Figure::FigureColor color)
 void Engine::drawFigures()
 {
 	Figure* figure = currentFigure_.first;
-	std::vector<sf::Vector2f> tilePositions = currentFigure_.second;
+	std::vector<sf::Vector2f>& tilePositions = currentFigure_.second;
 	sf::Sprite sprite = getTileSprite(figure);
+
+	if (clock_.getElapsedTime().asSeconds() > constants::TimerDelay)
+	{
+		moveFigure(Figure::FigureMoveDirection::Down);
+		clock_.restart();
+	}
 
 	int i = 0;
 	for (auto it = tilePositions.begin(); it != tilePositions.end(); ++it)
 	{
-		sprite.setPosition(tilePositions[i].x * 18, tilePositions[i].y * 18);
+		sprite.setPosition(tilePositions[i].x * constants::TileSide, tilePositions[i].y * constants::TileSide);
 		window_->draw(sprite);
 		++i;
 	}
@@ -116,7 +124,7 @@ void Engine::rotateFigure()
 		int x = tilePositions[i].y - centerPoint.y;
 		int y = tilePositions[i].x - centerPoint.x;
 		tilePositions[i].x = centerPoint.x - x;
-		tilePositions[i].y = centerPoint.y - y;
+		tilePositions[i].y = centerPoint.y + y;
 	}
 }
 
