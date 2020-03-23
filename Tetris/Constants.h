@@ -6,14 +6,20 @@
 
 namespace constants
 {
-	const std::string TextureFileName = "C:\\dev\\C++\\Tetris\\x64\\Debug\\images\\tiles.png";
+	// Путь к файлу с тайлами
+	
+	const std::string TileTextureFileName = "C:\\dev\\C++\\Tetris\\x64\\Debug\\images\\tiles.png";
 
+	// Размер тайла
 	const int TileSide = 18;
 
+	// Высота поля
 	const int FieldHeight = 20;
+	// Ширина поля
 	const int FieldWeight = 10;
 
-	const std::map<Figure::FigureType, std::vector<int>> FigureValues
+	// Таблица компоновки фигур
+	const std::map<Figure::FigureType, std::vector<int>> RelativeLayoutTableValues
 	{
 		{ Figure::FigureType::I, { 1, 3, 5, 7 } },
 		{ Figure::FigureType::S, { 2, 4, 5, 7 } },
@@ -24,5 +30,6 @@ namespace constants
 		{ Figure::FigureType::O, { 2, 3, 4, 5 } },
 	};
 
+	// Задержка таймера, по истечению которой фигура сдвигается вниз
 	const float TimerDelay = 0.3;
 }

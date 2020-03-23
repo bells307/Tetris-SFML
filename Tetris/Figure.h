@@ -4,11 +4,14 @@
 #include <map>
 #include <list>
 #include <SFML/Graphics.hpp>
+#include <time.h>
 
+// Класс, описывающий тип и цвет тетрамино
 class Figure
 {
 public:
 
+	// Тип фигуры
 	enum FigureType
 	{
 		I,
@@ -17,9 +20,11 @@ public:
 		T,
 		L,
 		J,
-		O
+		O,
+		TypeCount
 	};
 
+	// Цвет фигуры
 	enum FigureColor
 	{
 		Blue,
@@ -29,9 +34,10 @@ public:
 		Yellow,
 		Cyan,
 		Orange,
-		Count
+		ColorCount
 	};
 
+	// Направления, в которых фигура может двигаться
 	enum FigureMoveDirection
 	{
 		Left,
@@ -49,6 +55,16 @@ public:
 	FigureType getType() { return type_; }
 	void setColor(FigureColor color) { color_ = color; }
 	FigureColor getColor() { return color_; }
+
+	// Получить случайную фигуру
+	static Figure* getRandomFigure()
+	{
+		srand(time(0));
+		FigureType type = (FigureType)(rand() % FigureType::TypeCount - 1);
+		FigureColor color = (FigureColor)(rand() % FigureColor::ColorCount - 1);
+
+		return new Figure(type, color);
+	}
 
 private:
 	FigureType type_;

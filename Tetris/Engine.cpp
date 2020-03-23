@@ -3,7 +3,15 @@
 Engine::Engine(sf::RenderWindow* window) :
 	window_(window)
 {
-	createFigure(Figure::FigureType::J, Figure::FigureColor::Cyan);
+	tileHelper_ = new TileHelper();
+
+	// “екстура тайла
+	sf::Texture* tileTexture = new sf::Texture();
+	tileTexture->loadFromFile(constants::TileTextureFileName);
+
+	tileHelper_->makeTileSprites(*tileTexture);
+
+	createFigure(Figure::getRandomFigure());
 }
 
 void Engine::keyPressed(sf::Keyboard::Key key)
@@ -27,41 +35,22 @@ void Engine::keyPressed(sf::Keyboard::Key key)
 	}
 }
 
-void Engine::makeTileSprites(const sf::Texture& texture)
-{
-	tileSprites.clear();
-	for (int i = 0, img_count = 0; i < Figure::FigureColor::Count; ++i, img_count += constants::TileSide)
-	{
-		sf::Sprite sprite(texture);
-		sprite.setTextureRect(sf::IntRect(img_count, 0, constants::TileSide, constants::TileSide));
-		tileSprites.emplace((Figure::FigureColor)i, sprite);
-	}
-}
-
-sf::Sprite Engine::getTileSprite(Figure* figure)
-{
-	if (nullptr == figure)
-		return sf::Sprite();
-
-	sf::Sprite res;
-
-	auto sprite_it = tileSprites.find(figure->getColor());
-	if (sprite_it == tileSprites.end())
-		res = sf::Sprite();
-	else
-		res = (*sprite_it).second;
-
-	return res;
-}
-
 void Engine::createFigure(Figure::FigureType type, Figure::FigureColor color)
 {
-	Figure* figure = new Figure(type, color);
-	std::vector<int> values = getFigureValues(figure);
+	createFigure(new Figure(type, color));
+}
 
-	std::vector<sf::Vector2f> tilePositions(values.size());
+void Engine::createFigure(Figure* figure)
+{
+	// Ќельз€ создавать новую фигуру до того момента, пока стара€ не опустилась
+	if (currentFigure_.first)
+		return;
+
+	std::vector<int> relativeLayoutValues = getRelativeLayoutValues(figure);
+
+	std::vector<sf::Vector2f> tilePositions(relativeLayoutValues.size());
 	int i = 0;
-	for (auto it = values.begin(); it != values.end(); ++it)
+	for (auto it = relativeLayoutValues.begin(); it != relativeLayoutValues.end(); ++it)
 	{
 		tilePositions[i].x = *it % 2;
 		tilePositions[i].y = *it / 2;
@@ -74,7 +63,7 @@ void Engine::drawFigures()
 {
 	Figure* figure = currentFigure_.first;
 	std::vector<sf::Vector2f>& tilePositions = currentFigure_.second;
-	sf::Sprite sprite = getTileSprite(figure);
+	sf::Sprite sprite = tileHelper_->getTileSprite(figure);
 
 	if (clock_.getElapsedTime().asSeconds() > constants::TimerDelay)
 	{
@@ -117,6 +106,7 @@ void Engine::moveFigure(Figure::FigureMoveDirection dir)
 void Engine::rotateFigure()
 {
 	std::vector<sf::Vector2f>& tilePositions = currentFigure_.second;
+	// “очка, относительно которой будет происходить вращение
 	sf::Vector2f centerPoint = tilePositions[1];
 
 	for (int i = 0; i < tilePositions.size(); i++)
@@ -128,11 +118,11 @@ void Engine::rotateFigure()
 	}
 }
 
-std::vector<int> Engine::getFigureValues(Figure* figure)
+std::vector<int> Engine::getRelativeLayoutValues(Figure* figure)
 {
 	std::vector<int> res;
-	auto find_it = constants::FigureValues.find(figure->getType());
-	if (find_it != constants::FigureValues.end())
+	auto find_it = constants::RelativeLayoutTableValues.find(figure->getType());
+	if (find_it != constants::RelativeLayoutTableValues.end())
 		res = (*find_it).second;
 
 	return res;

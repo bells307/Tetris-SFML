@@ -2,18 +2,13 @@
 #include "Constants.h"
 #include "Engine.h"
 #include "Field.h"
+#include "TileHelper.h"
 
 int main()
 {
-	// Загружаем текстуру из файла
-	sf::Texture texture;
-	texture.loadFromFile(constants::TextureFileName);
-
-	Engine::makeTileSprites(texture);
-
 	sf::RenderWindow window(sf::VideoMode(320, 480), "Game");
 
-	Engine director(&window);
+	Engine engine(&window);
 
 	while (window.isOpen())
 	{
@@ -26,13 +21,13 @@ int main()
 			}
 			else if (event.type == sf::Event::KeyPressed)
 			{
-				director.keyPressed(event.key.code);
+				engine.keyPressed(event.key.code);
 			}
 		}
 
 		window.clear(sf::Color::White);
 
-		director.drawFigures();
+		engine.drawFigures();
 
 		window.display();
 	}
